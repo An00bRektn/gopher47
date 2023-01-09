@@ -20,7 +20,7 @@ class CommandShell(Command):
 
     def job_generate( self, arguments: dict ) -> bytes:
         Task = Packer()
-        Task.add_data(arguments['commands'])
+        Task.add_data("shell " + arguments['commands'])
         return Task.buffer
 
 class CommandExit(Command):
@@ -44,7 +44,7 @@ class Gopher47(AgentType):
     Author = "@An00bRektn"
     Version = "0.1"
     Description = f"""Golang 3rd party agent for Havoc, version {Version}"""
-    MagicValue = 0xc0ffeeee
+    MagicValue = 0x63616665
 
     Arch = [
         "x64"
@@ -58,7 +58,7 @@ class Gopher47(AgentType):
         {
             "Name": "ELF",
             "Extension": ""
-        }
+        },
     ]
 
     BuildingConfig = {
@@ -85,9 +85,9 @@ class Gopher47(AgentType):
     
     def response(self, response: dict) -> bytes:
         agent_header    = response[ "AgentHeader" ]
-        print("[+] Receieved request from agent")
+        print("[+] Receieved request from agent: ", end='')
         agent_response  = base64.b64decode(response["Response"]) # the teamserver base64 encodes the request.
-        print(agent_response)
+        print(agent_response.decode())
         agentjson = json.loads(agent_response, strict=False)
         if agentjson["task"] == "register":
             print("[*] Registered agent")
