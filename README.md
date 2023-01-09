@@ -40,3 +40,10 @@ idk, but grow up. Obfuscate and customize it yourself, stop being a baby.
 ### How's your day going?
 I photoshopped a gun into the Golang gopher's hand for this at 1:00 AM, and my Winter break is over tomorrow.
 
+
+## Acknowledgements/References/Related Work
+- [C5pider](https://github.com/Cracked5pider) and the entire [Havoc Framework](https://github.com/HavocFramework) team for letting me not have to write my own C2 to do some implant development
+- [SharpAgent](https://github.com/susMdT/SharpAgent/) and [PyHmmm](https://github.com/CodeXTF2/PyHmmm) were great ~~projects to steal from~~ reference material
+- [OffensiveGolang](https://github.com/bluesentinelsec/OffensiveGoLang) has some neat Offensive Go work
+- [maldev-for-dummies](https://github.com/chvancooten/maldev-for-dummies) also is a nice starting point for working with not C malware
+
