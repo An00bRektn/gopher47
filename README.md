@@ -16,17 +16,18 @@ By the time this is out, you can read more about what and why this is at my blog
 
 ## Commands
 
-| Command      | Description | Example |
-| ----------- | ----------- | ----------- |
-| `o7`   | The gopher dies |  o7 |
-| `shell`      | Run a command (executed through Go's `os/exec`) | shell netstat -ano |
+| Command | Description                                     | Example            |
+|---------|-------------------------------------------------|--------------------|
+| `o7`    | The gopher dies :(                              | o7                 |
+| `shell` | Run a command (executed through Go's `os/exec`) | shell netstat -ano |
+
 
 ## Usage
 Once you have your teamserver up, it's as simple as running the following:
 - **Attacking Machine**: `python handler.py`
 - **Target Machine**: `./gopher47`
 
-You can use the Havoc GUI to compile it, or you can just edit the source code as you please, there isn't that much of it.
+You can use the Havoc GUI to compile it, or you can just edit the source code as you please and play with the Makefile, there isn't that much of it.
 
 ## FAQ
 
