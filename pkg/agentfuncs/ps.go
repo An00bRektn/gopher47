@@ -18,5 +18,7 @@ func Kill(pid int) error {
 	if err != nil {
 		return err
 	}
-	return p.Kill()	
+	death := p.Kill()
+	recover() // TODO: Check in with a Golang expert if this is correct
+	return death
 }

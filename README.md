@@ -20,6 +20,7 @@ By the time this is out, you can read more about what and why this is at my blog
 |---------|-------------------------------------------------|--------------------|
 | `o7`    | The gopher dies :(                              | o7                 |
 | `shell` | Run a command (executed through Go's `os/exec`) | shell netstat -ano |
+| `kill`  | Kills a process by PID                          | kill 31337         |
 
 
 ## Usage
@@ -36,6 +37,9 @@ I just wanted to have an actual Golang project put together that I can [point to
 
 ### Will it evade AV/EDR?
 idk, but grow up. Obfuscate and customize it yourself, stop being a baby.
+
+### Why's the binary so large though?
+Golang, along with Rust and other languages, compile **statically**, meaning all of the libraries necessary to run the executable are baked into the binary, which adds up. If you want to reduce the size, I won't do it by default, but check out [this link](https://github.com/xaionaro/documentation/blob/master/golang/reduce-binary-size.md) for some tips. 
 
 ### How's your day going?
 I photoshopped a gun into the Golang gopher's hand for this at 1:00 AM, and my Winter break is over tomorrow.

