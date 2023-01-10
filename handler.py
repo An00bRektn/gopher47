@@ -26,6 +26,25 @@ class CommandShell(Command):
         Task.add_data("shell " + arguments['commands'])
         return Task.buffer
 
+class CommandKill(Command):
+    Name = "kill"
+    Description = "Kills a process off of PID, may fail without sufficient privs. Please only do one PID at a time"
+    Help = "Ex: kill 1337"
+    NeedAdmin = False
+    Params = [
+        CommandParam(
+            name="PID",
+            is_file_path=False,
+            is_optional=False
+        )
+    ]
+    Mitr = []
+
+    def job_generate( self, arguments: dict ) -> bytes:
+        Task = Packer()
+        Task.add_data("kill " + arguments['PID'])
+        return Task.buffer
+
 class CommandExit(Command):
     Name        = "o7"
     Description = "just tells the agent to exit"
@@ -73,6 +92,7 @@ class Gopher47(AgentType):
     Commands = [
         CommandShell(),
         CommandExit(),
+        CommandKill(),
     ]
 
     # Stolen from https://github.com/susMdT/SharpAgent/blob/main/handler.py
@@ -93,7 +113,9 @@ class Gopher47(AgentType):
                 urlBase = "https://"+config['Options']['Listener'].get("Hosts")[0]+":"+config['Options']['Listener'].get("Port")
 
             for endpoint in config['Options']['Listener'].get("Uris"):
-                if endpoint[0] != '/': #check if the uri starts with /
+                if endpoint == '':
+                    urls.append(urlBase+'/')
+                elif endpoint[0] != '/': #check if the uri starts with /
                     urls.append(urlBase+'/'+endpoint)
                 else:
                     urls.append(urlBase+endpoint)
@@ -115,9 +137,9 @@ class Gopher47(AgentType):
             ]
 
             new_strings = [
-                f'Url: "{urls[0]}"',
-                f'SleepTime: {sleep}',
-                f'JitterRange: {jitter}'
+                f'Url: "{urls[0]}",',
+                f'SleepTime: {sleep},',
+                f'JitterRange: {jitter},'
             ]
             # You better be running this from the project directory >:(
             conf = join("pkg", "utils")
@@ -127,7 +149,7 @@ class Gopher47(AgentType):
             with open(join(conf, "config.go"), 'w') as fd:
                 for i in range(len(old_strings)):
                     print(f'Changing [{old_strings[i]}] to [{new_strings[i]}] in {join(conf, "config.go")}')
-                    s = (re.sub(fr"{old_strings[i]}.*;", new_strings[i], s))
+                    s = (re.sub(fr"{old_strings[i]}.*,", new_strings[i], s))
                 fd.write(s)
 
             # TODO: Find a better way to do this, this looks scuffed and bad and ugly
