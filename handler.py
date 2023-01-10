@@ -86,6 +86,7 @@ class Gopher47(AgentType):
     BuildingConfig = {
         "Sleep": "10",
         "JitterRange": "100",
+        "TimeoutThreshold": "4",
         "Use Garble?": False
     }
 
@@ -130,17 +131,24 @@ class Gopher47(AgentType):
             jitter = int(config['Config'].get('JitterRange'))
             self.builder_send_message( config[ 'ClientID' ], "Info", f"Agent Jitter: {jitter}" )
 
+            # Timeout Threshold stuff
+            timeout = int(config['Config'].get('TimeoutThreshold'))
+            self.builder_send_message( config[ 'ClientID' ], "Info", f"Agent Jitter: {jitter}" )
+
             old_strings = [
                 "Url:",
                 "SleepTime:",
-                "JitterRange:"
+                "JitterRange:",
+                "TimeoutThreshold:",
             ]
 
             new_strings = [
                 f'Url: "{urls[0]}",',
                 f'SleepTime: {sleep},',
                 f'JitterRange: {jitter},'
+                f'TimeoutThreshold: {timeout},'
             ]
+            
             # You better be running this from the project directory >:(
             conf = join("pkg", "utils")
             with open(join(conf, "config.go"), 'r') as fd:
