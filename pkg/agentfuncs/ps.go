@@ -1,4 +1,4 @@
-package functions
+package agentfuncs
 
 // https://github.com/BishopFox/sliver/blob/master/implant/sliver/ps/ps.go
 

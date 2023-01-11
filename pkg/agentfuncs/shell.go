@@ -1,4 +1,4 @@
-package functions
+package agentfuncs
 
 import (
 	"os/exec"
