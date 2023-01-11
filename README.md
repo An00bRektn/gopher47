@@ -16,14 +16,14 @@ By the time this is out, you can read more about what and why this is at my blog
 
 ## Commands
 
-| Command    | Description                                     | Example                                           |
-|------------|-------------------------------------------------|---------------------------------------------------|
-| `o7`       | The gopher dies :(                              | o7                                                |
-| `shell`    | Run a command (executed through Go's `os/exec`) | shell netstat -ano                                |
-| `kill`     | Kills a process by PID                          | kill 31337                                        |
-| `ls`       | Lists files in a given directory                | ls C:\Users\Administrator\Desktop                 |
-| `upload`   | Uploads a file to a remote path                 | upload /opt/chisel.exe C:\Windows\Temp\Bruh.exe   |
-| `download` | Downloads a remote file to a local path         | download C:\passwords.txt /home/kali/loot/pwd.txt |
+| Command    | Description                                        | Example                                           |
+|------------|----------------------------------------------------|---------------------------------------------------|
+| `o7`       | The gopher dies :(                                 | o7                                                |
+| `shell`    | Run a command (executed through Go's `os/exec`)    | shell netstat -ano                                |
+| `kill`     | Kills a process by PID                             | kill 31337                                        |
+| `ls`       | Lists files in a given directory                   | ls C:\Users\Administrator\Desktop                 |
+| `upload`   | Uploads a file to a remote path                    | upload /opt/chisel.exe C:\Windows\Temp\Bruh.exe   |
+| `download` | Downloads a remote file to the loot folder         | download C:\passwords.txt pwd.txt                 |
 
 ## Usage
 Once you have your teamserver up, it's as simple as running the following:
