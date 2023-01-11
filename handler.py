@@ -157,7 +157,8 @@ class Gopher47(AgentType):
         "Sleep": "10",
         "JitterRange": "100",
         "TimeoutThreshold": "4",
-        "Use Garble?": False
+        "Use Garble?": False,
+        "Minimize Binary Size?": False
     }
 
     Commands = [
@@ -237,14 +238,18 @@ class Gopher47(AgentType):
             compile_cmd = "go"
             os_target = "linux"
             ext = ""
+            make_small = ""
             if config["Config"].get('Use Garble?'):
                 compile_cmd = "garble"
+
+            if config["Config"].get('Minimize Binary Size?'):
+                make_small = "-ldflags=\"-w -s\" -gcflags=all=-l"
 
             if config["Options"].get('Format') == "Windows Executable":
                 os_target = "windows"
                 ext = ".exe"
 
-            system(f"GOOS={os_target} GOARCH=amd64 {compile_cmd} build -o bin/gopher47{ext}")
+            system(f"GOOS={os_target} GOARCH=amd64 {compile_cmd} build -o bin/gopher47{ext} {make_small}")
             
             with open(join("bin", f"gopher47{ext}"), 'rb') as fd:
                 dat = fd.read()

@@ -41,7 +41,7 @@ I just wanted to have an actual Golang project put together that I can [point to
 idk, but grow up. Obfuscate and customize it yourself, stop being a baby.
 
 ### Why's the binary so large though?
-Golang, along with Rust and other languages, compile **statically**, meaning all of the libraries necessary to run the executable are baked into the binary, which adds up. If you want to reduce the size, I won't do it by default, but check out [this link](https://github.com/xaionaro/documentation/blob/master/golang/reduce-binary-size.md) for some tips. 
+Golang, along with Rust and other languages, compile **statically**, meaning all of the libraries necessary to run the executable are baked into the binary, which adds up. If you want to reduce the size, I won't do it by default, but check out [this link](https://github.com/xaionaro/documentation/blob/master/golang/reduce-binary-size.md) for some tips. **UPDATE**: I added an option to do some of this, but I'm sure there's more customization you could do :/
 
 ### Can I run multiple Gophers?
 For now, not really. The current Havoc API only allows for one handler to be handled by one agent, and there really isn't a good, clean way to have multiple up at the same time. Reworks are in-progress but for now, there can only be one Gopher47.
