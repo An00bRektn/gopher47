@@ -10,8 +10,8 @@ type Config struct {
 /* Returns config to agent. Make modifications here. */
 func GetConfig() Config {
 	config := Config{
-		Url: "http://127.0.0.1:80",
-		SleepTime: 5,
+		Url: "http://127.0.0.1:80/",
+		SleepTime: 10,
 		JitterRange: 100,
 		TimeoutThreshold: 4,
 	}

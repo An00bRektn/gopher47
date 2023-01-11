@@ -9,4 +9,4 @@ linux:
 
 windows:
 	printf "\033[0;36m[*]\033[0m Building Gopher47 agent (windows)...\n"
-	GOOS=windows GOARCH=amd64 go build -o bin/gopher47
+	GOOS=windows GOARCH=amd64 go build -o bin/gopher47.exe

