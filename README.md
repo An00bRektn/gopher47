@@ -46,6 +46,9 @@ Golang, along with Rust and other languages, compile **statically**, meaning all
 ### Can I run multiple Gophers?
 For now, not really. The current Havoc API only allows for one handler to be handled by one agent, and there really isn't a good, clean way to have multiple up at the same time. Reworks are in-progress but for now, there can only be one Gopher47.
 
+### Is the communication encrypted?
+No. As of version 0.4 of Havoc, there is no way to do a secure key exchange without straight up compromising keys. Once the system is reworked in the havoc-py interface, I will get that done.
+
 ### How's your day going?
 I photoshopped a gun into the Golang gopher's hand for this at 1:00 AM, and my Winter break is over tomorrow.
 
