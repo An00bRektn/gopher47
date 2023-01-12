@@ -25,6 +25,7 @@ By the time this is out, you can read more about what and why this is at my blog
 | `upload`   | Uploads a file to a remote path                    | upload /opt/chisel.exe C:\Windows\Temp\Bruh.exe   |
 | `download` | Downloads a remote file to the loot folder         | download C:\passwords.txt pwd.txt                 |
 | `portscan` | TCP portscan on a single target.                   | portscan common 192.168.13.37 4                   |
+| `shellcode`| Load shellcode into the implant process            | shellcode 9090ccc3                                |
 
 ## Usage
 Once you have your teamserver up, it's as simple as running the following:
