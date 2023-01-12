@@ -115,6 +115,38 @@ class CommandDownload(Command):
         packer.add_data(f"download {arguments['remote_path']};{arguments['local_file']}")
         return packer.buffer    
 
+class CommandPortscan(Command):
+    Name = "portscan"
+    Description = "TCP port scanning, one target at a time. No spaces in between ports please."
+    Help = """Usage: portscan [comma separated ports] [target] [concurrent scans]
+    Example: portscan 22,80,8080,1337 10.10.10.10 4
+    You can also enter 'all' or 'common' instead of a list of ports."""
+    NeedAdmin = False
+    Mitr = []
+    Params = [
+        CommandParam(
+            name="ports",
+            is_file_path=False,
+            is_optional=False,
+        ),
+        CommandParam(
+            name="target",
+            is_file_path=False,
+            is_optional=False,
+        ),
+        CommandParam(
+            name="workers",
+            is_file_path=False,
+            is_optional=False
+        )
+    ]
+
+    def job_generate(self, arguments:dict) -> bytes:
+        print("[*] job generate")
+        packer = Packer()
+        packer.add_data(f"portscan {arguments['ports']} {arguments['target']} {arguments['workers']}")
+        return packer.buffer
+
 class CommandExit(Command):
     Name        = "o7"
     Description = "just tells the agent to exit"
@@ -167,6 +199,7 @@ class Gopher47(AgentType):
         CommandLs(),
         CommandUpload(),
         CommandDownload(),
+        CommandPortscan(),
         CommandExit()
     ]
 

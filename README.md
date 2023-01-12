@@ -24,6 +24,7 @@ By the time this is out, you can read more about what and why this is at my blog
 | `ls`       | Lists files in a given directory                   | ls C:\Users\Administrator\Desktop                 |
 | `upload`   | Uploads a file to a remote path                    | upload /opt/chisel.exe C:\Windows\Temp\Bruh.exe   |
 | `download` | Downloads a remote file to the loot folder         | download C:\passwords.txt pwd.txt                 |
+| `portscan` | TCP portscan on a single target.                   | portscan common 192.168.13.37 4                   |
 
 ## Usage
 Once you have your teamserver up, it's as simple as running the following:
@@ -52,10 +53,9 @@ No. As of version 0.4 of Havoc, there is no way to do a secure key exchange with
 ### How's your day going?
 I photoshopped a gun into the Golang gopher's hand for this at 1:00 AM, and my Winter break is over tomorrow.
 
-
 ## Acknowledgements/References/Related Work
 - [C5pider](https://github.com/Cracked5pider) and the entire [Havoc Framework](https://github.com/HavocFramework) team for letting me not have to write my own C2 to do some implant development
 - [SharpAgent](https://github.com/susMdT/SharpAgent/) and [PyHmmm](https://github.com/CodeXTF2/PyHmmm) were great ~~projects to steal from~~ reference material
-- [OffensiveGolang](https://github.com/bluesentinelsec/OffensiveGoLang) has some neat Offensive Go work
+- [OffensiveGolang](https://github.com/bluesentinelsec/OffensiveGoLang) has some neat Offensive Go work (although I wish there was more)
 - [maldev-for-dummies](https://github.com/chvancooten/maldev-for-dummies) also is a nice starting point for working with not C malware
 
