@@ -2,7 +2,7 @@ package agentfuncs
 
 import (
 	"fmt"
-	"log"
+	//"log"
 	"net"
 	"sort"
 )
@@ -49,7 +49,7 @@ func PortScanTCP(addr string, targets []int, workers int) string {
 	sort.Ints(openports)
 	output := ""
 	for _, port := range openports {
-		log.Printf("%d open\n", port)
+		//log.Printf("%d open\n", port)
 		output = fmt.Sprintf(output + "%d,", port)
 	}
 

