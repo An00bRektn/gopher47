@@ -250,8 +250,11 @@ class Gopher47(AgentType):
                     urls.append(urlBase+endpoint)
             self.builder_send_message( config[ 'ClientID' ], "Info", f"Agent URLs: {urls}" )
 
+            # Get User-Agent
+            user_agent = config['Options']['Listener'].get('UserAgent')
+            self.builder_send_message( config['ClientID'], "Info", f"User Agent: {user_agent}")
+
             # Sleep is in seconds
-            print(config['Config'])
             sleep = int(config['Config'].get('Sleep'))
             self.builder_send_message( config[ 'ClientID' ], "Info", f"Agent Sleep (s): {sleep}" )
 
@@ -265,6 +268,7 @@ class Gopher47(AgentType):
 
             old_strings = [
                 "Url:",
+                "UserAgent:",
                 "SleepTime:",
                 "JitterRange:",
                 "TimeoutThreshold:",
@@ -272,6 +276,7 @@ class Gopher47(AgentType):
 
             new_strings = [
                 f'Url: "{urls[0]}",',
+                f'UserAgent: "{user_agent}",',
                 f'SleepTime: {sleep},',
                 f'JitterRange: {jitter},',
                 f'TimeoutThreshold: {timeout},',

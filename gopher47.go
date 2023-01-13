@@ -24,6 +24,7 @@ import (
 var (
 	c = utils.GetConfig()
 	url = c.Url
+	userAgent = c.UserAgent
 	sleepTime = c.SleepTime
 	jitterRange = c.JitterRange
 	magicBytes = []byte("\x67\x6f\x67\x6f")
@@ -94,6 +95,7 @@ func registerAgent(url string, magic []byte, agentId string) string{
 	// https://stackoverflow.com/questions/24455147/how-do-i-send-a-json-string-in-a-post-request-in-go
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(append(agentHeader, []byte(requestDat)...)))
 	checkError(err)
+	req.Header.Set("User-Agent", userAgent)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Content-Length", strconv.Itoa(size))
 
@@ -132,6 +134,7 @@ func checkIn(dat string, checkInType string) string{
 	} else {
 		timeoutCounter = 0
 	}
+	req.Header.Set("User-Agent", userAgent)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Content-Length", strconv.Itoa(size))
 
