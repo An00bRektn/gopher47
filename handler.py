@@ -307,7 +307,7 @@ class Gopher47(AgentType):
             
             with open(join("bin", f"gopher47{ext}"), 'rb') as fd:
                 dat = fd.read()
-                self.builder_send_payload(config["ClientID"], self.Name, dat)
+                self.builder_send_payload(config["ClientID"], f"{self.Name}{ext}", dat)
 
         except Exception as e:
             import traceback
