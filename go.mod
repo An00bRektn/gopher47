@@ -2,7 +2,12 @@ module github.com/An00bRektn/gopher47
 
 go 1.19
 
-require github.com/elastic/go-sysinfo v1.9.0
+require (
+	github.com/Ne0nd0g/go-clr v1.0.3
+	github.com/elastic/go-sysinfo v1.9.0
+)
+
+require golang.org/x/text v0.3.7 // indirect
 
 require (
 	github.com/elastic/go-windows v1.0.0 // indirect

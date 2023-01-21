@@ -20,3 +20,6 @@ env
 .env
 __pycache__
 *.pyc
+
+# Files for testing
+test/

