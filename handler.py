@@ -299,6 +299,7 @@ class Gopher47(AgentType):
 
             old_strings = [
                 "Url:",
+                "IsSecure:",
                 "UserAgent:",
                 "SleepTime:",
                 "JitterRange:",
@@ -307,6 +308,7 @@ class Gopher47(AgentType):
 
             new_strings = [
                 f'Url: "{urls[0]}",',
+                f'IsSecure: {str(config["Options"]["Listener"].get("Secure")).lower()},',
                 f'UserAgent: "{user_agent}",',
                 f'SleepTime: {sleep},',
                 f'JitterRange: {jitter},',
@@ -345,6 +347,7 @@ class Gopher47(AgentType):
             with open(join("bin", f"gopher47{ext}"), 'rb') as fd:
                 dat = fd.read()
                 self.builder_send_payload(config["ClientID"], f"{self.Name}{ext}", dat)
+            system(f"rm bin/gopher47{ext}")
 
         except Exception as e:
             self.builder_send_message( config[ 'ClientID' ], "Error", f"There was a build error: {traceback.format_exc()}" )

