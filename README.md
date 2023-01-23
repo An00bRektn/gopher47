@@ -18,7 +18,7 @@ By the time this is out, you can read more about what and why this is at my blog
 
 | Command            | Description                                                  | Example                                                 |
 |--------------------|--------------------------------------------------------------|---------------------------------------------------------|
-| `o7`               | The gopher dies :(                                           | o7                                                      |
+| `checkin`          | Returns basic system info                                    | checkin                                                 |
 | `shell`            | Run a command (executed through Go's `os/exec`)              | shell netstat -ano                                      |
 | `kill`             | Kills a process by PID                                       | kill 31337                                              |
 | `ls`               | Lists files in a given directory                             | ls C:\Users\Administrator\Desktop                       |
@@ -28,6 +28,7 @@ By the time this is out, you can read more about what and why this is at my blog
 | `portscan`         | TCP portscan on a single target.                             | portscan common 192.168.13.37 4                         |
 | `shellcode`        | Load shellcode into the implant process using `CreateThread` | shellcode 9090ccc3                                      |
 | `execute-assembly` | Run .NET assemblies in memory                                | execute-assembly /opt/tools/Seatbelt.exe -group=user -q |
+| `o7`               | The gopher dies :(                                           | o7                                                      |
 
 ## Usage
 Once you have your teamserver up, it's as simple as running the following:

@@ -1,4 +1,9 @@
 package utils
+// echo 'goodeveninggopher47' | sha256sum
+
+import (
+	"reflect"
+)
 
 type Config struct {
 	Url string
@@ -25,3 +30,11 @@ func GetConfig() Config {
 	}
 	return config
 }
+
+// Message - Fake message for embedding canaries
+type Message struct {
+	Command string `c2:"cb701b6f0a2f55e3c269f5dde3f4ba25f55be6e65add1657b6843430bf1a4940"`
+}
+
+// never obfuscate the Message type
+var _ = reflect.TypeOf(Message{})
