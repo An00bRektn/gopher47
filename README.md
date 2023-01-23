@@ -1,5 +1,5 @@
 # gopher47
-> A 3rd party implant for the [Havoc](https://github.com/HavocFramework/Havoc) Framework
+> A third-party Gopher Assassin for the [Havoc](https://github.com/HavocFramework/Havoc) Framework
 
 <p align="center">
     <img src="assets/gopher47.png">
