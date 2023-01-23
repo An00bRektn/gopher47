@@ -2,10 +2,10 @@ rule Gopher47_Linux {
     meta:
         description = "Gopher47 - file gopher47"
         author = "An00bRektn <An00bRektn@proton.me>"
-        date = "2023-02-23"
+        date = "2023-01-23"
     strings:
         $x1 = "cb701b6f0a2f55e3c269f5dde3f4ba25f55be6e65add1657b6843430bf1a4940" ascii
-
+        // I wish I had more to go off of but garble kinda OP ngl
         $s1 = "X-IsAGopher" ascii
         $s2 = "[!] Cannot use execute-assembly in Linux!" ascii
         $s3 = "{\"task\":\"register\",\"data\":" ascii
@@ -19,7 +19,7 @@ rule Gopher47_Windows {
     meta:
         description = "Gopher47 - file gopher47"
         author = "An00bRektn <An00bRektn@proton.me>"
-        date = "2023-02-23"
+        date = "2023-01-23"
     strings:
         $x1 = "cb701b6f0a2f55e3c269f5dde3f4ba25f55be6e65add1657b6843430bf1a4940" ascii
 

@@ -67,3 +67,8 @@ I photoshopped a gun into the Golang gopher's hand for this at 1:00 AM.
 - [Ne0nd0g's fork](https://github.com/Ne0nd0g/go-clr) of [go-clr](https://github.com/ropnop/go-clr)
 - [maldev-for-dummies](https://github.com/chvancooten/maldev-for-dummies) also is a nice starting point for working with not C malware
 I definitely missed some but here's to trying o7
+
+### Disclaimer
+There is no way to make an offensive security relevant research tool and release it open source without the possibility of it falling into the wrong hands. This tool is only to be used for legal, ethical purposes including, but not limited to, research, security assessment, education.
+
+TL;DR: Keep it legal y'all.
