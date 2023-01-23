@@ -26,6 +26,10 @@ func JsonEscape(i string) string {
     return string(b[1:len(b)-1])
 }
 
+
+// because of how weird interfaces get named, it's a lot easier to get
+// all of the IPs, and then find the first one that isn't loopback or IPv6
+// might ruin the graph display though
 func FindNotLoopback(ips []string) string {
 	var cleaned string
 	for _, ip := range ips {

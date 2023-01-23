@@ -271,7 +271,6 @@ class Gopher47(AgentType):
 
     # Stolen from https://github.com/susMdT/SharpAgent/blob/main/handler.py
     def generate( self, config: dict ) -> None:
-        # builder_send_message. this function send logs/messages to the payload build for verbose information or sending errors (if something went wrong).
         self.builder_send_message( config[ 'ClientID' ], "Info", f"Options Config: {config['Options']}" )
         self.builder_send_message( config[ 'ClientID' ], "Info", f"Agent Config: {config['Config']}" )
 

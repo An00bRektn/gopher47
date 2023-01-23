@@ -9,7 +9,11 @@ type Config struct {
 	TimeoutThreshold int
 }
 
-/* Returns config to agent. Make modifications here. */
+/* 
+	Returns config to agent. Make modifications here.
+	We're defining the config here so it's more "malleable",
+	although this isn't a one-to-one
+*/
 func GetConfig() Config {
 	config := Config{
 		Url: "http://127.0.0.1:80/",

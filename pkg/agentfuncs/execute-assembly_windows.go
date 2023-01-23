@@ -11,8 +11,10 @@ import (
 // Ne0nd0g is my goat
 // don't have to put this together myself pog
 
+// takes the raw bytes from a .NET PE and uses Ne0nd0g's go-clr to host the CLR
+// and run it in-memory. You can read the code, but obviously v4 only
 func ExecuteAssembly(assemblyEnc string, params []string) string {
-	assemblyBytes, err := b64.StdEncoding.DecodeString(assemblyEnc)
+	assemblyBytes, err := b64.StdEncoding.DecodeString(assemblyEnc) // bytes are sent over with base64
 	if err != nil {
 		return "[!] Failed to upload assembly: " + err.Error()
 	}

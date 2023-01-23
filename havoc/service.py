@@ -2,7 +2,6 @@ import base64
 from cgi import print_form
 
 from havoc.agent import AgentType
-from havoc.externalc2 import ExternalC2
 from threading import Thread
 
 import websocket
@@ -102,26 +101,6 @@ class HavocService:
             self.Socket.send( request )
         else:
             print( "[!] Agent already registered" )
-
-        return
-
-    def register_externalc2( self, externalc2: ExternalC2 ):
-
-        if self.ExternalC2 is None:
-
-            self.ExternalC2 = externalc2
-            self.ExternalC2._Service_instance = self
-
-            request = json.dumps(
-                build_request("RegisterAgent", {
-                    "Agent": agent_type.get_dict()
-                }),
-                sort_keys=True
-            )
-
-            self.Socket.send(request)
-        else:
-            print( "[-] External C2 already registered" )
 
         return
 

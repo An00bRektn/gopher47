@@ -16,6 +16,9 @@ import (
 	"text/tabwriter"
 )
 
+// Context: The go-sysinfo package only works with Linux and sudo
+// 			So we have to scrape /proc
+// Info on /proc: https://man7.org/linux/man-pages/man5/proc.5.html
 type UnixProcess struct {
 	UID		int
 	User	string
@@ -150,6 +153,8 @@ func Ps() string {
 		return "[!] Error: " + err.Error()
 	}
 	var sb strings.Builder
+
+	// https://stackoverflow.com/questions/36101534/the-efficient-way-to-print-a-table-in-go
 	writer := tabwriter.NewWriter(&sb, 0, 8, 1, '\t', tabwriter.AlignRight)
 	fmt.Fprintln(writer, "USER\tPID\tPPID\tCOMMAND")
 	fmt.Fprintln(writer, "=====\t====\t=====\t========")
@@ -172,6 +177,6 @@ func Kill(pid int) error {
 	if err := p.Kill(); err != nil {
 		return err
 	}
-	_, err = p.Wait()
+	_, err = p.Wait() // Wait for the process to exit, otherwise PANIC
 	return err
 }

@@ -22,6 +22,8 @@ func Shell(cmd []string) string {
     return string(res)
 }
 
+// Currently unused - I want to try and do some unmanaged powershell stuff, but I need to learn
+// how to do that first
 func PowerShell(cmd []string) string {
     c := exec.Command("powershell.exe", append([]string{"-Command"}, strings.Join(cmd, " "))...)
 	c.SysProcAttr = &syscall.SysProcAttr{
@@ -35,6 +37,8 @@ func PowerShell(cmd []string) string {
 }
 
 // TODO: Make a Windows version that looks nice
+// 		 We need to parse ACLs and stuff and that's hard :(
+//		 This looks relevant but idk: https://github.com/hectane/go-acl
 func Ls(dir string) string {
     // Read Directory Listing
 	f, err := os.Open(dir)
