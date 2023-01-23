@@ -10,7 +10,7 @@
 ## What is This? 🤔
 This is a 3rd Party agent for the Havoc C2 written in Golang, mainly written as a learning project, but I'm sure it's still useful.
 
-By the time this is out, you can read more about what and why this is at my blog: [here](https://notateamserver.xyz)
+By the time this is out, you can read more about what and why this is at my blog: [here](https://notateamserver.xyz/havoc-implant/)
 
 **Contributions welcome!** I don't plan on updating this all too regularly, but if I have fun making it I might add more stuff over time.
 
@@ -53,6 +53,7 @@ For now, not really. The current Havoc API only allows for one handler to be han
 
 ### Is the communication encrypted?
 No. As of version 0.4 of Havoc, there is no way to do a secure key exchange without straight up compromising keys. Once the system is reworked in the havoc-py interface, I will get that done. **THEREFORE THIS IS NOT OPSEC SAFE** <sub>please do not be stupid and use this in a real engagement, CTFs/labs are fine though</sub>
+
 HTTPS will provide encryption, but use at your own risk.
 
 ### How's your day going?
@@ -60,8 +61,9 @@ I photoshopped a gun into the Golang gopher's hand for this at 1:00 AM.
 
 ## Acknowledgements/References/Related Work
 - [C5pider](https://github.com/Cracked5pider) and the entire [Havoc Framework](https://github.com/HavocFramework) team for letting me not have to write my own C2 to do some implant development
-- [Sliver](https://github.com/BishopFox/sliver) and [Merlin](https://github.com/Ne0nd0g/merlin) for pioneering a lot of Offensive Golang
+- [Sliver](https://github.com/BishopFox/sliver) and [Merlin](https://github.com/Ne0nd0g/merlin) for pioneering (or at least innovating) a lot of Offensive Golang
 - [SharpAgent](https://github.com/susMdT/SharpAgent/) and [PyHmmm](https://github.com/CodeXTF2/PyHmmm) were great ~~projects to steal from~~ reference material
 - [OffensiveGolang](https://github.com/bluesentinelsec/OffensiveGoLang) has some neat Offensive Go work
 - [Ne0nd0g's fork](https://github.com/Ne0nd0g/go-clr) of [go-clr](https://github.com/ropnop/go-clr)
 - [maldev-for-dummies](https://github.com/chvancooten/maldev-for-dummies) also is a nice starting point for working with not C malware
+I definitely missed some but here's to trying o7
