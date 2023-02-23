@@ -7,7 +7,7 @@ require (
 	github.com/elastic/go-sysinfo v1.9.0
 )
 
-require golang.org/x/text v0.3.7 // indirect
+require golang.org/x/text v0.3.8 // indirect
 
 require (
 	github.com/elastic/go-windows v1.0.0 // indirect
