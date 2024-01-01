@@ -37,6 +37,10 @@ Once you have your teamserver up, it's as simple as running the following:
 
 You can use the Havoc GUI to compile it, or you can just edit the source code as you please and play with the Makefile, there isn't that much of it.
 
+## Known Issues
+- *Incorrect OS Name in Client* - As of 1/1/24, Havoc has been restructured and is more particular about how it recieves the OS Version. Still WIP, but it just straight up doesn't support Linux operating systems right now. The current fix just makes a fake version number that at least lets the implant function, but I need to do some rewriting.
+- *Missing Information* - mostly a laziness thing tbh, honestly didn't think I'd come back to this
+
 ## FAQ
 
 ### Why Go?
@@ -47,6 +51,9 @@ idk, but grow up. Obfuscate and customize it yourself, stop being a baby.
 
 ### Why's the binary so large though?
 Golang, along with Rust and other languages, compile **statically**, meaning all of the libraries necessary to run the executable are baked into the binary, which adds up. If you want to reduce the size, I won't do it by default, but check out [this link](https://github.com/xaionaro/documentation/blob/master/golang/reduce-binary-size.md) for some tips. **UPDATE**: I added an option to do some of this, but I'm sure there's more customization you could do :/
+
+### Is it OPSEC-safe?
+Bad question, if you read the code you'll find a number of things that aren't ideal. If you were really concerned about OPSEC, you'd have started reading the code by now and making fixes where they need to be done.
 
 ### Can I run multiple Gophers?
 For now, not really. The current Havoc API only allows for one handler to be handled by one agent, and there really isn't a good, clean way to have multiple up at the same time. Reworks are in-progress but for now, there can only be one Gopher47.

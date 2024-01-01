@@ -21,7 +21,7 @@ type Config struct {
 */
 func GetConfig() Config {
 	config := Config{
-		Url: "http://127.0.0.1:80/",
+		Url: "http://10.10.69.34:8080/",
 		IsSecure: false,
 		UserAgent: "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36",
 		SleepTime: 10,

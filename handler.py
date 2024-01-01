@@ -294,9 +294,9 @@ class Gopher47(AgentType):
             urls = []
             self.builder_send_message( config[ 'ClientID' ], "Info", f"Agent secure: {config['Options']['Listener'].get('Secure')}" )
             if config['Options']['Listener'].get("Secure") == False:
-                urlBase = "http://"+config['Options']['Listener'].get("Hosts")[0]+":"+config['Options']['Listener'].get("Port")
+                urlBase = "http://"+config['Options']['Listener'].get("Hosts")[0]+":"+config['Options']['Listener'].get("PortBind")
             else:
-                urlBase = "https://"+config['Options']['Listener'].get("Hosts")[0]+":"+config['Options']['Listener'].get("Port")
+                urlBase = "https://"+config['Options']['Listener'].get("Hosts")[0]+":"+config['Options']['Listener'].get("PortBind")
 
             for endpoint in config['Options']['Listener'].get("Uris"):
                 if endpoint == '':
@@ -426,7 +426,7 @@ def main():
     Havoc_Gopher = Gopher47()
     print("[*] Connecting to the Havoc service API...")
     Havoc_Service = HavocService(
-        endpoint="ws://localhost:40056/service-endpoint",
+        endpoint="wss://localhost:40056/service-endpoint",
         password="service-password"
     )
     print("[+] Connected!")
